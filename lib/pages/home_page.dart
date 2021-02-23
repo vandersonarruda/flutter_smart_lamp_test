@@ -47,7 +47,7 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
     loadData();
 
     checkDeviceAvailable();
-    checkDeviceConnected();
+    //checkDeviceConnected();
 
     //print(getInfoDevice("FF956A9B-BC85-6C6A-6AB4-71971FB58ECE"));
 
@@ -67,10 +67,11 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
     //   // }
     // });
 
-    // Timer.periodic(Duration(seconds: 5), (timer) {
-    //   //print(DateTime.now());
-    //   checkDeviceStatus();
-    // });
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      //print(DateTime.now());
+      //checkDeviceStatus();
+      checkDeviceConnected();
+    });
   }
 
   // Device getInfoDevice(String id) {
@@ -116,10 +117,10 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
       for (ScanResult r in results) {
         _devices.map((e) async {
           if (e.id.contains(r.device.id.toString())) {
-            setState(() {
-              e.connected = true;
-              e.device = r.device;
-            });
+            // setState(() {
+            //   e.connected = true;
+            //   e.device = r.device;
+            // });
 
             await r.device.connect(autoConnect: true);
             await r.device.discoverServices();
@@ -134,21 +135,36 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
   }
 
   checkDeviceConnected() {
+    print("---");
+    //int counter = 0;
+
     _devices.map((e) {
-      if (e.connected == false) {
-        flutterBlue.connectedDevices.then((value) {
-          value.map((item) {
-            if (e.id == item.id.toString()) {
-              print(item.id.toString());
-              setState(() {
-                e.connected = true;
-                e.device = item;
-              });
-            }
-          }).toList();
-        });
-      }
+      //if (e.connected == false) {
+      flutterBlue.connectedDevices.then((value) {
+        //print(value.length);
+
+        if ((value.singleWhere((it) => it.id.toString() == e.id.toString(),
+                orElse: () => null)) !=
+            null) {
+          print('Exists! ${e.id.toString()}');
+          setState(() {
+            e.connected = true;
+          });
+        } else {
+          print('NO!  ${e.id.toString()}');
+          setState(() {
+            e.connected = false;
+          });
+
+          checkDeviceAvailable();
+        }
+      });
     }).toList();
+
+    // print("counter: ${counter}");
+    // if (counter > 0) {
+    //   checkDeviceAvailable();
+    // }
   }
 
   Device getInfoDevice(String id) {
@@ -333,9 +349,9 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
                                 if (snapshot.data ==
                                     BluetoothDeviceState.connected) {}
                                 return Icon(Icons.bluetooth_connected_rounded);
-                                if (snapshot.data ==
-                                    BluetoothDeviceState.disconnected) {}
-                                return Icon(Icons.bluetooth_disabled_rounded);
+                                // if (snapshot.data ==
+                                //     BluetoothDeviceState.disconnected) {}
+                                // return Icon(Icons.bluetooth_disabled_rounded);
                                 //return Text(snapshot.data.toString());
                                 // return Icon(
                                 //   Icons.bluetooth,
