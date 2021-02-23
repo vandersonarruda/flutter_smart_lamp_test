@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -48,9 +49,65 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
     checkDeviceAvailable();
     checkDeviceConnected();
 
-    //connectDeviceAvailable();
-    //checkIsConnected();
+    //print(getInfoDevice("FF956A9B-BC85-6C6A-6AB4-71971FB58ECE"));
+
+    //checkDeviceStatus();
+
+    // FF956A9B-BC85-6C6A-6AB4-71971FB58ECE
+    // AAF2D70D-0CBE-D3AD-4A29-D9957EC122C0
+
+    // Device temp = getInfoDevice("AAF2D70D-0CBE-D3AD-4A29-D9957EC122C0");
+    // print(temp);
+
+    // _devices.map((e) {
+    //   print("aaaa");
+    //   //print("ID ${e.id.toString()}");
+    //   // if (e.id.contains(id)) {
+    //   //   tmp = e;
+    //   // }
+    // });
+
+    // Timer.periodic(Duration(seconds: 5), (timer) {
+    //   //print(DateTime.now());
+    //   checkDeviceStatus();
+    // });
   }
+
+  // Device getInfoDevice(String id) {
+  //   print("aaaa");
+  //   Device tmp;
+  //   print(_devices.length);
+  //   _devices.map((e) {
+  //     print("dff");
+  //     //print("ID ${e.id.toString()}");
+  //     // if (e.id.contains(id)) {
+  //     //   tmp = e;
+  //     // }
+  //   });
+  //   return tmp;
+  // }
+
+  // checkDeviceStatus() {
+  //   _devices.map((e) {
+  //     print("aaa");
+  //   });
+  //   // _devices.map((e) {
+  //   //   print(e.device.state.toString());
+  //   //   // if (e.connected == false) {
+  //   //   //   flutterBlue.connectedDevices.then((value) {
+  //   //   //     value.map((item) {
+  //   //   //       if (e.id == item.id.toString()) {
+  //   //   //         print(item.id.toString());
+  //   //   //         setState(() {
+  //   //   //           e.connected = true;
+  //   //   //           e.device = item;
+  //   //   //         });
+  //   //   //       }
+  //   //   //     }).toList();
+  //   //   //   });
+  //   //   // }
+  //   // }).toList();
+  // }
 
   checkDeviceAvailable() {
     flutterBlue.startScan(timeout: Duration(seconds: 4));
@@ -78,8 +135,6 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
 
   checkDeviceConnected() {
     _devices.map((e) {
-      print("DEV ${e.connected}");
-
       if (e.connected == false) {
         flutterBlue.connectedDevices.then((value) {
           value.map((item) {
@@ -96,89 +151,14 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
     }).toList();
   }
 
-  checkIsConnected() {
-    flutterBlue.connectedDevices.then((value) {
-      if (value.length > 0) {
-        // if ((_devices.singleWhere(
-        //         (it) => it.id == "AAF2D70D-0CBE-D3AD-4A29-D9957EC122C0",
-        //         orElse: () => null)) !=
-        //     null) {
-        //   print('Tem!');
-        // } else {
-        //   print('Nao tem!');
-        // }
-        // value.map((item) {
-        //   print(item.id.toString());
-        // }).toList();
+  Device getInfoDevice(String id) {
+    Device tmp;
+    _devices.map((e) {
+      if (e.id.contains(id)) {
+        tmp = e;
       }
-    });
-
-    // AAF2D70D-0CBE-D3AD-4A29-D9957EC122C0
-    // 23A69362-00F9-6E01-FCAB-8DF2D7A0421E
-    /*
-    if ((_devices.singleWhere(
-            (it) => it.id == "AAF2D70D-0CBE-D3AD-4A29-D9957EC122C0",
-            orElse: () => null)) !=
-        null) {
-      print('Tem!');
-    } else {
-      print('Nao tem!');
-    }
-    */
-    /*
-    _devices.map((d) {
-      bool temp = false;
-      flutterBlue.connectedDevices.then((value) {
-        if (value.length > 0) {
-          value.map((item) {
-            print("check");
-            print(d.id);
-            print(item.id.toString());
-            if (d.id.contains(item.id.toString())) temp = true;
-          }).toList();
-        }
-      });
-      d.connected = temp;
     }).toList();
-    */
-    /*
-    flutterBlue.connectedDevices.then((value) {
-      print("CHECK ${value.length}");
-      if (value.length > 0) {
-        value.map((item) {
-          _devices.map((d) {
-            if (d.id.contains(item.id.toString())) {
-              d.connected = true;
-            }
-          }).toList();
-        }).toList();
-      }
-      // } else {
-      //   searchDeviceAvailable();
-      // }
-    });
-    */
-  }
-
-  connectDeviceAvailable() {
-    flutterBlue.startScan(timeout: Duration(seconds: 4));
-
-    flutterBlue.scanResults.listen((results) {
-      for (ScanResult r in results) {
-        _devices.map((e) async {
-          if (e.id.contains(r.device.id.toString())) {
-            print("Device Connected: ${r.device.id}");
-            await r.device.connect(autoConnect: true);
-            await r.device.discoverServices();
-            //e.connected = true;
-          } else {
-            //e.connected = false;
-          }
-        }).toList();
-      }
-    });
-
-    flutterBlue.stopScan();
+    return tmp;
   }
 
   bool checkDeviceID({String id}) {
@@ -188,67 +168,6 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
     }).toList();
     return contain;
   }
-
-  // _devices.map((dev) {
-  //   if (dev.id.contains(item.id.toString())) {
-  //     dev.connected = true;
-  //   }
-  // }).toList();
-
-  /////////
-
-  // if ((_devices.singleWhere((it) => it.connected == false,
-  //         orElse: () => null)) !=
-  //     null) {
-  //   print('Already exists!');
-  // } else {
-  //   print('Added!');
-  // }
-
-  // flutterBlue.connectedDevices.then((value) {
-  //   print("> Devices conectados: ${value.length}");
-
-  //   if (value.length > 0) {}
-
-  //   /*
-  //   if (value.length > 0) {
-  //     value.map((e) {
-  //       print(e.id.toString());
-  //       if (e.id.toString() == d.id) {
-  //         print("> Device encontrado");
-  //         d.connected = true;
-  //       }
-  //     }).toList();
-  //   }
-  //   */
-  // });
-
-  /*
-    print("####");
-
-    _devices.map((d) {
-      print("id: ${d.id}");
-      print("connected: ${d.connected}");
-
-      //if (d.connected == false || d.connected == null) {
-
-      flutterBlue.connectedDevices.then((value) {
-        print("> Devices conectados: ${value.length}");
-
-        if (value.length > 0) {
-          value.map((e) {
-            print(e.id.toString());
-            if (e.id.toString() == d.id) {
-              print("> Device encontrado");
-              d.connected = true;
-            } 
-          }).toList();
-        }
-      });
-    }).toList();
-
-    searchDeviceAvailable();
-    */
 
   void addDevice(Device item) {
     if (!checkDeviceID(id: item.id)) {
@@ -294,133 +213,149 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
               )),
         ],
       ),
-      body: Column(
-        children: [
-          Column(
-            children: _devices.map((e) {
-              //print(_devices.length);
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text("${e.name}"),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(e.id),
-                      Text("Power: ${e.power}"),
-                      Text("Connected: ${e.connected}"),
-                      if (e.device != null) Text("Device: ${e.device.name}"),
-                      Text(
-                          "Scene: ${e.scene} | RGB: ${e.red}-${e.green}-${e.blue}"),
-                    ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Column(
+              children: _devices.map((e) {
+                //print(_devices.length);
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListTile(
+                    title: Text("${e.name}"),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(e.id),
+                        Text("Power: ${e.power}"),
+                        Text("Connected: ${e.connected}"),
+                        if (e.device != null) Text("Device: ${e.device.name}"),
+                        Text(
+                            "Scene: ${e.scene} | RGB: ${e.red}-${e.green}-${e.blue}"),
+                      ],
+                    ),
+                    tileColor: Colors.amber,
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return DetailsPage(
+                          device: e.device,
+                          detail: e,
+                          onDelete: removeDevice,
+                          onUpdate: saveData,
+                        );
+                      }));
+                    },
                   ),
-                  tileColor: Colors.amber,
-                  onTap: () {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      return DetailsPage(
-                        device: e.device,
-                        detail: e,
-                        onDelete: removeDevice,
-                        onUpdate: saveData,
-                      );
-                    }));
-                  },
-                ),
-              );
-            }).toList(),
-          ),
-          StreamBuilder<List<BluetoothDevice>>(
-            stream: Stream.periodic(Duration(seconds: 2))
-                .asyncMap((_) => FlutterBlue.instance.connectedDevices),
-            initialData: [],
-            builder: (c, snapshot) {
-              //print("DEVICE ${_devices.length}");
-              // print(_devices);
+                );
+              }).toList(),
+            ),
+            StreamBuilder<List<BluetoothDevice>>(
+              stream: Stream.periodic(Duration(seconds: 2))
+                  .asyncMap((_) => FlutterBlue.instance.connectedDevices),
+              initialData: [],
+              builder: (c, snapshot) {
+                //print("DEVICE ${_devices.length}");
+                // print(_devices);
 
-              //device.add(Device(title: "Test", id: 1));
-              //print(device[0].id);
-              //print("Devices: ${snapshot.data.length}");
-              //print(device.length);
+                //device.add(Device(title: "Test", id: 1));
+                //print(device[0].id);
+                //print("Devices: ${snapshot.data.length}");
+                //print(device.length);
 
-              if (snapshot.data.length < 1) {
-                return Text('asdas');
-                // return MessageOnScreen(
-                //   title: 'Nenhum Dispositivo\nConfigurado',
-                //   description:
-                //       'Para visualizar seus dispositivos conectados,\nhabilite o bluetooth nas preferências.',
-                //   icon: Icons.lightbulb_outline_sharp,
-                // );
-              } else {
-                return Column(
-                  children: snapshot.data.map((d) {
-                    //if (d.name.contains(kBluetoothName)) {
-                    // final Device dev = Device(title: "Test", id: 1, device: d);
-                    // if (!device.contains(d)) {
-                    //   device.add(Device(title: "Test", id: 1, device: d));
-                    // }
-                    //print(device);
+                if (snapshot.data.length < 1) {
+                  return Text('Nenhum device');
+                  // return MessageOnScreen(
+                  //   title: 'Nenhum Dispositivo\nConfigurado',
+                  //   description:
+                  //       'Para visualizar seus dispositivos conectados,\nhabilite o bluetooth nas preferências.',
+                  //   icon: Icons.lightbulb_outline_sharp,
+                  // );
+                } else {
+                  return Column(
+                    children: snapshot.data.map((d) {
+                      //if (d.name.contains(kBluetoothName)) {
+                      // final Device dev = Device(title: "Test", id: 1, device: d);
+                      // if (!device.contains(d)) {
+                      //   device.add(Device(title: "Test", id: 1, device: d));
+                      // }
+                      //print(device);
 
-                    //print(device[0]);
-                    //print(d);
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        color: Colors.lightBlue[100],
-                        child: ListTile(
-                          title: Text(d.name),
-                          subtitle: Text(d.id.toString()),
-                          onTap: () {
-                            print("----");
-                            _devices.map((e) {
-                              if (e.id == d.id.toString()) {
-                                print(e.id);
-                                print(e.name);
-                                print(e.power);
+                      //print(device[0]);
+                      //print(d);
 
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(builder: (context) {
-                                  return DetailsPage(
-                                    device: d,
-                                    detail: e,
-                                    onDelete: removeDevice,
-                                    onUpdate: saveData,
-                                  );
-                                }));
-                              }
-                            }).toList();
+                      Device dataLight = getInfoDevice(d.id.toString());
 
-                            print("----");
-                            // Navigator.of(context)
-                            //     .push(MaterialPageRoute(builder: (context) {
-                            //   return DetailsPage(device: d);
-                            // }));
-                          },
-                          trailing: StreamBuilder<BluetoothDeviceState>(
-                            stream: d.state,
-                            initialData: BluetoothDeviceState.disconnected,
-                            builder: (c, snapshot) {
-                              if (snapshot.data ==
-                                  BluetoothDeviceState.connected) {}
-                              //return Text(snapshot.data.toString());
-                              return Icon(
-                                Icons.bluetooth,
-                                color: Colors.blueAccent,
-                              );
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          color: Colors.lightBlue[100],
+                          child: ListTile(
+                            title: Column(
+                              children: [
+                                Text(d.name),
+                                if (dataLight != null)
+                                  Text("POWER ${dataLight.power.toString()}"),
+                                if (dataLight != null)
+                                  Text("SCENE ${dataLight.scene.toString()}"),
+                              ],
+                            ),
+                            subtitle: Text(d.id.toString()),
+                            onTap: () {
+                              _devices.map((e) {
+                                if (e.id == d.id.toString()) {
+                                  // print(e.id);
+                                  // print(e.name);
+                                  // print(e.power);
+
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (context) {
+                                    return DetailsPage(
+                                      device: d,
+                                      detail: dataLight,
+                                      onDelete: removeDevice,
+                                      onUpdate: saveData,
+                                    );
+                                  }));
+                                }
+                              }).toList();
+
+                              print("----");
+                              // Navigator.of(context)
+                              //     .push(MaterialPageRoute(builder: (context) {
+                              //   return DetailsPage(device: d);
+                              // }));
                             },
+                            trailing: StreamBuilder<BluetoothDeviceState>(
+                              stream: d.state,
+                              initialData: BluetoothDeviceState.disconnected,
+                              builder: (c, snapshot) {
+                                if (snapshot.data ==
+                                    BluetoothDeviceState.connected) {}
+                                return Icon(Icons.bluetooth_connected_rounded);
+                                if (snapshot.data ==
+                                    BluetoothDeviceState.disconnected) {}
+                                return Icon(Icons.bluetooth_disabled_rounded);
+                                //return Text(snapshot.data.toString());
+                                // return Icon(
+                                //   Icons.bluetooth,
+                                //   color: Colors.blueAccent,
+                                // );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                    // } else {
-                    //   return Container();
-                    // }
-                  }).toList(),
-                );
-              }
-            },
-          ),
-        ],
+                      );
+                      // } else {
+                      //   return Container();
+                      // }
+                    }).toList(),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       ),
 
       // body: Container(
