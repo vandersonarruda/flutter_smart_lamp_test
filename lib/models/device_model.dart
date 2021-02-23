@@ -1,7 +1,10 @@
+import 'package:flutter_blue/flutter_blue.dart';
+
 class Device {
   String id, name;
-  bool power;
+  bool power, connected;
   int scene, red, green, blue;
+  BluetoothDevice device;
 
   Device({
     this.id,
@@ -11,6 +14,8 @@ class Device {
     this.red = 0,
     this.green = 0,
     this.blue = 0,
+    this.connected = false,
+    this.device,
   });
 
   Map toMap() {
@@ -22,6 +27,8 @@ class Device {
       'red': this.red,
       'green': this.green,
       'blue': this.blue,
+      'connected': false,
+      // 'device': '',
     };
   }
 
@@ -32,5 +39,7 @@ class Device {
         this.scene = map['scene'],
         this.red = map['red'],
         this.green = map['green'],
-        this.blue = map['blue'];
+        this.blue = map['blue'],
+        this.connected = map['connected'];
+  // this.device = map['device'];
 }

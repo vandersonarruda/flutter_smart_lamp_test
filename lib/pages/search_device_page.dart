@@ -80,7 +80,9 @@ class SearchDevicePage extends StatelessWidget {
                               //final String bleID = r.device.id.toString();
                               final item = Device(
                                   id: r.device.id.toString(),
-                                  name: r.device.name);
+                                  name: r.device.name,
+                                  connected: true);
+
                               onSubmit(item);
 
                               return Navigator.of(context).pop();

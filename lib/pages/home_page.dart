@@ -33,6 +33,8 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
   List<Device> _devices = [];
   SharedPreferences sharedPreferences;
 
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+
   @override
   void initState() {
     initSharedPreferences();
@@ -42,22 +44,228 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
   initSharedPreferences() async {
     sharedPreferences = await SharedPreferences.getInstance();
     loadData();
+
+    checkDeviceAvailable();
+    checkDeviceConnected();
+
+    //connectDeviceAvailable();
+    //checkIsConnected();
   }
 
+  checkDeviceAvailable() {
+    flutterBlue.startScan(timeout: Duration(seconds: 4));
+
+    flutterBlue.scanResults.listen((results) {
+      for (ScanResult r in results) {
+        _devices.map((e) async {
+          if (e.id.contains(r.device.id.toString())) {
+            setState(() {
+              e.connected = true;
+              e.device = r.device;
+            });
+
+            await r.device.connect(autoConnect: true);
+            await r.device.discoverServices();
+
+            flutterBlue.stopScan();
+          }
+        }).toList();
+      }
+    });
+
+    flutterBlue.stopScan();
+  }
+
+  checkDeviceConnected() {
+    _devices.map((e) {
+      print("DEV ${e.connected}");
+
+      if (e.connected == false) {
+        flutterBlue.connectedDevices.then((value) {
+          value.map((item) {
+            if (e.id == item.id.toString()) {
+              print(item.id.toString());
+              setState(() {
+                e.connected = true;
+                e.device = item;
+              });
+            }
+          }).toList();
+        });
+      }
+    }).toList();
+  }
+
+  checkIsConnected() {
+    flutterBlue.connectedDevices.then((value) {
+      if (value.length > 0) {
+        // if ((_devices.singleWhere(
+        //         (it) => it.id == "AAF2D70D-0CBE-D3AD-4A29-D9957EC122C0",
+        //         orElse: () => null)) !=
+        //     null) {
+        //   print('Tem!');
+        // } else {
+        //   print('Nao tem!');
+        // }
+        // value.map((item) {
+        //   print(item.id.toString());
+        // }).toList();
+      }
+    });
+
+    // AAF2D70D-0CBE-D3AD-4A29-D9957EC122C0
+    // 23A69362-00F9-6E01-FCAB-8DF2D7A0421E
+    /*
+    if ((_devices.singleWhere(
+            (it) => it.id == "AAF2D70D-0CBE-D3AD-4A29-D9957EC122C0",
+            orElse: () => null)) !=
+        null) {
+      print('Tem!');
+    } else {
+      print('Nao tem!');
+    }
+    */
+    /*
+    _devices.map((d) {
+      bool temp = false;
+      flutterBlue.connectedDevices.then((value) {
+        if (value.length > 0) {
+          value.map((item) {
+            print("check");
+            print(d.id);
+            print(item.id.toString());
+            if (d.id.contains(item.id.toString())) temp = true;
+          }).toList();
+        }
+      });
+      d.connected = temp;
+    }).toList();
+    */
+    /*
+    flutterBlue.connectedDevices.then((value) {
+      print("CHECK ${value.length}");
+      if (value.length > 0) {
+        value.map((item) {
+          _devices.map((d) {
+            if (d.id.contains(item.id.toString())) {
+              d.connected = true;
+            }
+          }).toList();
+        }).toList();
+      }
+      // } else {
+      //   searchDeviceAvailable();
+      // }
+    });
+    */
+  }
+
+  connectDeviceAvailable() {
+    flutterBlue.startScan(timeout: Duration(seconds: 4));
+
+    flutterBlue.scanResults.listen((results) {
+      for (ScanResult r in results) {
+        _devices.map((e) async {
+          if (e.id.contains(r.device.id.toString())) {
+            print("Device Connected: ${r.device.id}");
+            await r.device.connect(autoConnect: true);
+            await r.device.discoverServices();
+            //e.connected = true;
+          } else {
+            //e.connected = false;
+          }
+        }).toList();
+      }
+    });
+
+    flutterBlue.stopScan();
+  }
+
+  bool checkDeviceID({String id}) {
+    bool contain = false;
+    _devices.map((d) {
+      if (d.id == id.toString()) contain = true;
+    }).toList();
+    return contain;
+  }
+
+  // _devices.map((dev) {
+  //   if (dev.id.contains(item.id.toString())) {
+  //     dev.connected = true;
+  //   }
+  // }).toList();
+
+  /////////
+
+  // if ((_devices.singleWhere((it) => it.connected == false,
+  //         orElse: () => null)) !=
+  //     null) {
+  //   print('Already exists!');
+  // } else {
+  //   print('Added!');
+  // }
+
+  // flutterBlue.connectedDevices.then((value) {
+  //   print("> Devices conectados: ${value.length}");
+
+  //   if (value.length > 0) {}
+
+  //   /*
+  //   if (value.length > 0) {
+  //     value.map((e) {
+  //       print(e.id.toString());
+  //       if (e.id.toString() == d.id) {
+  //         print("> Device encontrado");
+  //         d.connected = true;
+  //       }
+  //     }).toList();
+  //   }
+  //   */
+  // });
+
+  /*
+    print("####");
+
+    _devices.map((d) {
+      print("id: ${d.id}");
+      print("connected: ${d.connected}");
+
+      //if (d.connected == false || d.connected == null) {
+
+      flutterBlue.connectedDevices.then((value) {
+        print("> Devices conectados: ${value.length}");
+
+        if (value.length > 0) {
+          value.map((e) {
+            print(e.id.toString());
+            if (e.id.toString() == d.id) {
+              print("> Device encontrado");
+              d.connected = true;
+            } 
+          }).toList();
+        }
+      });
+    }).toList();
+
+    searchDeviceAvailable();
+    */
+
   void addDevice(Device item) {
-    _devices.add(item);
-    saveData();
+    if (!checkDeviceID(id: item.id)) {
+      setState(() => _devices.add(item));
+      saveData();
+    }
   }
 
   void removeDevice(Device item) {
-    _devices.remove(item);
+    setState(() => _devices.remove(item));
     saveData();
   }
 
   void saveData() {
     List<String> spList = _devices.map((e) => json.encode(e.toMap())).toList();
     sharedPreferences.setStringList('list', spList);
-    print("SPLIST $spList");
+    setState(() {});
   }
 
   void loadData() {
@@ -94,19 +302,29 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ListTile(
-                  title: Text("${e.name} (${e.power})"),
-                  subtitle: Text(e.id),
+                  title: Text("${e.name}"),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(e.id),
+                      Text("Power: ${e.power}"),
+                      Text("Connected: ${e.connected}"),
+                      if (e.device != null) Text("Device: ${e.device.name}"),
+                      Text(
+                          "Scene: ${e.scene} | RGB: ${e.red}-${e.green}-${e.blue}"),
+                    ],
+                  ),
                   tileColor: Colors.amber,
                   onTap: () {
-                    // Navigator.of(context)
-                    //     .push(MaterialPageRoute(builder: (context) {
-                    //   //return Container();
-                    //   return DetailsPage(
-                    //     device: e.device,
-                    //     data: [e],
-                    //   );
-                    // })
-                    //);
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (context) {
+                      return DetailsPage(
+                        device: e.device,
+                        detail: e,
+                        onDelete: removeDevice,
+                        onUpdate: saveData,
+                      );
+                    }));
                   },
                 ),
               );
