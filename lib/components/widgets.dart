@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key key, this.result, this.onTap}) : super(key: key);
@@ -78,7 +79,7 @@ class ScanResultTile extends StatelessWidget {
   }
 }
 
-class ServiceTile extends StatelessWidget {
+/* class ServiceTile extends StatelessWidget {
   final BluetoothService service;
   final List<CharacteristicTile> characteristicTiles;
 
@@ -111,6 +112,76 @@ class ServiceTile extends StatelessWidget {
       );
     }
   }
+} */
+
+class ServiceTile extends StatefulWidget {
+  final BluetoothService service;
+  final List<CharacteristicTile> characteristicTiles;
+
+  const ServiceTile({Key key, this.service, this.characteristicTiles})
+      : super(key: key);
+
+  @override
+  _ServiceTileState createState() => _ServiceTileState();
+}
+
+class _ServiceTileState extends State<ServiceTile> {
+  Color _color = Colors.blue;
+  Color _color2 = Colors.red;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.characteristicTiles.length > 0) {
+      return ExpansionTile(
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Testando"),
+            CircleColorPicker(
+              initialColor: _color2,
+              onChanged: (Color color) {
+                setState(() {
+                  _color2 = color;
+                  // onWritePressed();
+                  print("aaaa");
+                  //c.write(utf8.encode(color.toString()));
+                });
+              },
+              strokeWidth: 13.0,
+              thumbSize: 26,
+              colorCodeBuilder: (context, color) {
+                return Container();
+                // return Text(
+                //   'RGB(${color.red},${color.green},${color.blue})',
+                //   style: TextStyle(
+                //     fontSize: 24,
+                //     color: Colors.black,
+                //     // fontWeight: FontWeight.bold,
+                //   ),
+                //);
+              },
+            ),
+
+            // Text('Service'),
+            // Text('0x${service.uuid.toString().toUpperCase().substring(4, 8)}',
+            //     style: Theme.of(context)
+            //         .textTheme
+            //         .bodyText1
+            //         .copyWith(color: Theme.of(context).textTheme.caption.color))
+          ],
+        ),
+        children: widget.characteristicTiles,
+      );
+    }
+    // else {
+    //   return ListTile(
+    //     title: Text('Service'),
+    //     subtitle:
+    //         Text('0x${service.uuid.toString().toUpperCase().substring(4, 8)}'),
+    //   );
+    // }
+  }
 }
 
 class CharacteristicTile extends StatelessWidget {
@@ -119,15 +190,17 @@ class CharacteristicTile extends StatelessWidget {
   final VoidCallback onReadPressed;
   final VoidCallback onWritePressed;
   final VoidCallback onNotificationPressed;
+  final onSendMessage;
 
-  const CharacteristicTile(
-      {Key key,
-      this.characteristic,
-      this.descriptorTiles,
-      this.onReadPressed,
-      this.onWritePressed,
-      this.onNotificationPressed})
-      : super(key: key);
+  const CharacteristicTile({
+    Key key,
+    this.characteristic,
+    this.descriptorTiles,
+    this.onReadPressed,
+    this.onWritePressed,
+    this.onNotificationPressed,
+    this.onSendMessage,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -142,6 +215,9 @@ class CharacteristicTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
+                FlatButton(
+                    onPressed: onSendMessage("Testando..."),
+                    child: Text("Enviar")),
                 Text('Characteristic'),
                 Text(
                     '0x${characteristic.uuid.toString().toUpperCase().substring(4, 8)}',

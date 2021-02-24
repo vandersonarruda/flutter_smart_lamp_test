@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_lamp_app/components/message_screen.dart';
 import 'package:smart_lamp_app/models/device_model.dart';
 import 'package:smart_lamp_app/pages/details_page.dart';
+import 'package:smart_lamp_app/pages/device_page.dart';
 import 'package:smart_lamp_app/pages/search_device_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -135,36 +136,25 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
   }
 
   checkDeviceConnected() {
-    print("---");
-    //int counter = 0;
-
     _devices.map((e) {
-      //if (e.connected == false) {
       flutterBlue.connectedDevices.then((value) {
-        //print(value.length);
-
         if ((value.singleWhere((it) => it.id.toString() == e.id.toString(),
                 orElse: () => null)) !=
             null) {
-          print('Exists! ${e.id.toString()}');
+          //print('Exists! ${e.id.toString()}');
           setState(() {
             e.connected = true;
           });
         } else {
-          print('NO!  ${e.id.toString()}');
+          //print('NO!  ${e.id.toString()}');
           setState(() {
             e.connected = false;
           });
 
-          checkDeviceAvailable();
+          //checkDeviceAvailable();
         }
       });
     }).toList();
-
-    // print("counter: ${counter}");
-    // if (counter > 0) {
-    //   checkDeviceAvailable();
-    // }
   }
 
   Device getInfoDevice(String id) {
@@ -252,15 +242,16 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
                     ),
                     tileColor: Colors.amber,
                     onTap: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        return DetailsPage(
-                          device: e.device,
-                          detail: e,
-                          onDelete: removeDevice,
-                          onUpdate: saveData,
-                        );
-                      }));
+                      checkDeviceAvailable();
+                      // Navigator.of(context)
+                      //     .push(MaterialPageRoute(builder: (context) {
+                      //   return DetailsPage(
+                      //     device: e.device,
+                      //     detail: e,
+                      //     onDelete: removeDevice,
+                      //     onUpdate: saveData,
+                      //   );
+                      // }));
                     },
                   ),
                 );
@@ -324,9 +315,19 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
                                   // print(e.name);
                                   // print(e.power);
 
-                                  Navigator.of(context).push(
+                                  /* Navigator.of(context).push(
                                       MaterialPageRoute(builder: (context) {
                                     return DetailsPage(
+                                      device: d,
+                                      detail: dataLight,
+                                      onDelete: removeDevice,
+                                      onUpdate: saveData,
+                                    );
+                                  })); */
+
+                                  Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (context) {
+                                    return DevicePage(
                                       device: d,
                                       detail: dataLight,
                                       onDelete: removeDevice,
