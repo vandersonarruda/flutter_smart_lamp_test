@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 
 import 'package:smart_lamp_app/components/widgets.dart';
 import 'package:smart_lamp_app/models/device_model.dart';

@@ -46,7 +46,7 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
   initSharedPreferences() async {
     sharedPreferences = await SharedPreferences.getInstance();
     loadData();
-
+    //saveData();
     checkDeviceAvailable();
     //checkDeviceConnected();
 

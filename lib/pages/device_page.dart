@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:smart_lamp_app/components/circle_color_picker.dart';
 import 'package:smart_lamp_app/models/device_model.dart';
 
 class DevicePage extends StatefulWidget {
@@ -20,6 +21,9 @@ class DevicePage extends StatefulWidget {
 
 class _DevicePageState extends State<DevicePage> {
   List<BluetoothService> services;
+
+  bool releaseMessage = true;
+  Color _currentColor = Colors.blue;
 
   serviceDevice() async {
     services = await widget.device.discoverServices();
@@ -43,6 +47,16 @@ class _DevicePageState extends State<DevicePage> {
     });
   }
 
+  sendChangeColor(Color color) {
+    if (releaseMessage) {
+      releaseMessage = false;
+      sendMessage(color.toString());
+
+      Future.delayed(
+          const Duration(milliseconds: 500), () => releaseMessage = true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //widget.device.discoverServices();
@@ -51,6 +65,7 @@ class _DevicePageState extends State<DevicePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.device.name),
+        // backgroundColor: _currentColor,
         centerTitle: false,
         elevation: 0,
         actions: [
@@ -87,7 +102,9 @@ class _DevicePageState extends State<DevicePage> {
           )
         ],
       ),
-      body: SingleChildScrollView(
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
         child: Column(
           children: [
             StreamBuilder<List<BluetoothService>>(
@@ -99,16 +116,47 @@ class _DevicePageState extends State<DevicePage> {
                   children: [
                     Text("Servicos"),
                     FlatButton(
-                        color: Colors.amber,
-                        minWidth: 200,
-                        height: 50,
-                        onPressed: () {
-                          sendMessage("Vandeco");
-                        },
-                        child: Text(
-                          "test",
-                          style: TextStyle(fontSize: 20),
-                        )),
+                      color: Colors.amber,
+                      minWidth: 200,
+                      height: 50,
+                      onPressed: () {
+                        sendMessage("Envio Teste");
+                      },
+                      child: Text(
+                        "test",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    Switch.adaptive(
+                      // activeColor: Theme.of(context).primaryColor,
+                      value: widget.detail.power,
+                      onChanged: (value) {
+                        setState(
+                            () => widget.detail.power = !widget.detail.power);
+                        widget.onUpdate();
+                      },
+                    ),
+                    CircleColorPicker(
+                      size: Size(
+                        MediaQuery.of(context).size.width * 0.7,
+                        MediaQuery.of(context).size.width * 0.7,
+                      ),
+                      initialColor: _currentColor,
+                      onChanged: (Color color) {
+                        _currentColor = color;
+                        print(_currentColor);
+                        //sendChangeColor(_currentColor);
+                      },
+                      onRelease: () {
+                        setState(() {});
+                        sendChangeColor(_currentColor);
+                      },
+                      strokeWidth: 30.0,
+                      thumbSize: 60,
+                      colorCodeBuilder: (context, color) {
+                        return Container();
+                      },
+                    ),
                   ],
                 );
               },

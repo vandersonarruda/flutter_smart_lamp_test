@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
-import 'package:flutter_circle_color_picker/flutter_circle_color_picker.dart';
 
 class ScanResultTile extends StatelessWidget {
   const ScanResultTile({Key key, this.result, this.onTap}) : super(key: key);
@@ -138,7 +137,7 @@ class _ServiceTileState extends State<ServiceTile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Testando"),
-            CircleColorPicker(
+            /* CircleColorPicker(
               initialColor: _color2,
               onChanged: (Color color) {
                 setState(() {
@@ -161,7 +160,7 @@ class _ServiceTileState extends State<ServiceTile> {
                 //   ),
                 //);
               },
-            ),
+            ), */
 
             // Text('Service'),
             // Text('0x${service.uuid.toString().toUpperCase().substring(4, 8)}',

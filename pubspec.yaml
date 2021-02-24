@@ -29,8 +29,6 @@ dependencies:
   cupertino_icons: ^1.0.0
   flutter_blue: ^0.7.3
   shared_preferences: ^0.5.12+4
-  flutter_circle_color_picker: ^0.2.0
-  flutter_colorpicker: ^0.3.5
 
 dev_dependencies:
   flutter_test:
