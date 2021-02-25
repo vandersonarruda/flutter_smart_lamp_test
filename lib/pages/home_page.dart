@@ -204,7 +204,15 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Smart Lamp"),
+        title: Text(
+          "Smart Lamp",
+        ),
+        // backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
         actions: [
           FlatButton(
               onPressed: () {
@@ -219,159 +227,207 @@ class _ListDevicesPageState extends State<ListDevicesPage> {
               )),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Column(
-              children: _devices.map((e) {
-                //print(_devices.length);
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ListTile(
-                    title: Text("${e.name}"),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(e.id),
-                        Text("Power: ${e.power}"),
-                        Text("Connected: ${e.connected}"),
-                        if (e.device != null) Text("Device: ${e.device.name}"),
-                        Text(
-                            "Scene: ${e.scene} | RGB: ${e.red}-${e.green}-${e.blue}"),
-                      ],
+      body: Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: Container(
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            color: Color(0xFFF3F3F6),
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  Text(
+                    "Luminárias",
+                    style: TextStyle(
+                      fontSize: 20,
+                      // fontWeight: FontWeight.w700,
                     ),
-                    tileColor: Colors.amber,
-                    onTap: () {
-                      checkDeviceAvailable();
-                      // Navigator.of(context)
-                      //     .push(MaterialPageRoute(builder: (context) {
-                      //   return DetailsPage(
-                      //     device: e.device,
-                      //     detail: e,
-                      //     onDelete: removeDevice,
-                      //     onUpdate: saveData,
-                      //   );
-                      // }));
-                    },
                   ),
-                );
-              }).toList(),
-            ),
-            StreamBuilder<List<BluetoothDevice>>(
-              stream: Stream.periodic(Duration(seconds: 2))
-                  .asyncMap((_) => FlutterBlue.instance.connectedDevices),
-              initialData: [],
-              builder: (c, snapshot) {
-                //print("DEVICE ${_devices.length}");
-                // print(_devices);
-
-                //device.add(Device(title: "Test", id: 1));
-                //print(device[0].id);
-                //print("Devices: ${snapshot.data.length}");
-                //print(device.length);
-
-                if (snapshot.data.length < 1) {
-                  return Text('Nenhum device');
-                  // return MessageOnScreen(
-                  //   title: 'Nenhum Dispositivo\nConfigurado',
-                  //   description:
-                  //       'Para visualizar seus dispositivos conectados,\nhabilite o bluetooth nas preferências.',
-                  //   icon: Icons.lightbulb_outline_sharp,
-                  // );
-                } else {
-                  return Column(
-                    children: snapshot.data.map((d) {
-                      //if (d.name.contains(kBluetoothName)) {
-                      // final Device dev = Device(title: "Test", id: 1, device: d);
-                      // if (!device.contains(d)) {
-                      //   device.add(Device(title: "Test", id: 1, device: d));
-                      // }
-                      //print(device);
-
-                      //print(device[0]);
-                      //print(d);
-
-                      Device dataLight = getInfoDevice(d.id.toString());
-
+                  SizedBox(height: 10),
+                  Column(
+                    children: _devices.map((e) {
+                      //print(_devices.length);
                       return Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Container(
-                          color: Colors.lightBlue[100],
+                          // color: Colors.black,
+                          decoration: BoxDecoration(
+                            color: Color(0xFF22232C),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: ListTile(
-                            title: Column(
+                            // shape: RoundedRectangleBorder(
+                            //     borderRadius: BorderRadius.circular(10)),
+                            title: Text(
+                              "${e.name}",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(d.name),
-                                if (dataLight != null)
-                                  Text("POWER ${dataLight.power.toString()}"),
-                                if (dataLight != null)
-                                  Text("SCENE ${dataLight.scene.toString()}"),
+                                Text(
+                                  e.id,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text("Power: ${e.power}"),
+                                Text("Connected: ${e.connected}"),
+                                if (e.device != null)
+                                  Text("Device: ${e.device.name}"),
+                                Text(
+                                    "Scene: ${e.scene} | RGB: ${e.red}-${e.green}-${e.blue}"),
                               ],
                             ),
-                            subtitle: Text(d.id.toString()),
+                            // tileColor: Colors.black,
                             onTap: () {
-                              _devices.map((e) {
-                                if (e.id == d.id.toString()) {
-                                  // print(e.id);
-                                  // print(e.name);
-                                  // print(e.power);
-
-                                  /* Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) {
-                                    return DetailsPage(
-                                      device: d,
-                                      detail: dataLight,
-                                      onDelete: removeDevice,
-                                      onUpdate: saveData,
-                                    );
-                                  })); */
-
-                                  Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (context) {
-                                    return DevicePage(
-                                      device: d,
-                                      detail: dataLight,
-                                      onDelete: removeDevice,
-                                      onUpdate: saveData,
-                                    );
-                                  }));
-                                }
-                              }).toList();
-
-                              print("----");
+                              checkDeviceAvailable();
                               // Navigator.of(context)
                               //     .push(MaterialPageRoute(builder: (context) {
-                              //   return DetailsPage(device: d);
+                              //   return DetailsPage(
+                              //     device: e.device,
+                              //     detail: e,
+                              //     onDelete: removeDevice,
+                              //     onUpdate: saveData,
+                              //   );
                               // }));
                             },
-                            trailing: StreamBuilder<BluetoothDeviceState>(
-                              stream: d.state,
-                              initialData: BluetoothDeviceState.disconnected,
-                              builder: (c, snapshot) {
-                                if (snapshot.data ==
-                                    BluetoothDeviceState.connected) {}
-                                return Icon(Icons.bluetooth_connected_rounded);
-                                // if (snapshot.data ==
-                                //     BluetoothDeviceState.disconnected) {}
-                                // return Icon(Icons.bluetooth_disabled_rounded);
-                                //return Text(snapshot.data.toString());
-                                // return Icon(
-                                //   Icons.bluetooth,
-                                //   color: Colors.blueAccent,
-                                // );
-                              },
-                            ),
                           ),
                         ),
                       );
-                      // } else {
-                      //   return Container();
-                      // }
                     }).toList(),
-                  );
-                }
-              },
+                  ),
+                  StreamBuilder<List<BluetoothDevice>>(
+                    stream: Stream.periodic(Duration(seconds: 2))
+                        .asyncMap((_) => FlutterBlue.instance.connectedDevices),
+                    initialData: [],
+                    builder: (c, snapshot) {
+                      //print("DEVICE ${_devices.length}");
+                      // print(_devices);
+
+                      //device.add(Device(title: "Test", id: 1));
+                      //print(device[0].id);
+                      //print("Devices: ${snapshot.data.length}");
+                      //print(device.length);
+
+                      if (snapshot.data.length < 1) {
+                        return Text('Nenhum device');
+                        // return MessageOnScreen(
+                        //   title: 'Nenhum Dispositivo\nConfigurado',
+                        //   description:
+                        //       'Para visualizar seus dispositivos conectados,\nhabilite o bluetooth nas preferências.',
+                        //   icon: Icons.lightbulb_outline_sharp,
+                        // );
+                      } else {
+                        return Column(
+                          children: snapshot.data.map((d) {
+                            //if (d.name.contains(kBluetoothName)) {
+                            // final Device dev = Device(title: "Test", id: 1, device: d);
+                            // if (!device.contains(d)) {
+                            //   device.add(Device(title: "Test", id: 1, device: d));
+                            // }
+                            //print(device);
+
+                            //print(device[0]);
+                            //print(d);
+
+                            Device dataLight = getInfoDevice(d.id.toString());
+
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                color: Colors.lightBlue[100],
+                                child: ListTile(
+                                  title: Column(
+                                    children: [
+                                      Text(d.name),
+                                      if (dataLight != null)
+                                        Text(
+                                            "POWER ${dataLight.power.toString()}"),
+                                      if (dataLight != null)
+                                        Text(
+                                            "SCENE ${dataLight.scene.toString()}"),
+                                    ],
+                                  ),
+                                  subtitle: Text(d.id.toString()),
+                                  onTap: () {
+                                    _devices.map((e) {
+                                      if (e.id == d.id.toString()) {
+                                        // print(e.id);
+                                        // print(e.name);
+                                        // print(e.power);
+
+                                        /* Navigator.of(context).push(
+                                            MaterialPageRoute(builder: (context) {
+                                          return DetailsPage(
+                                            device: d,
+                                            detail: dataLight,
+                                            onDelete: removeDevice,
+                                            onUpdate: saveData,
+                                          );
+                                        })); */
+
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) {
+                                          return DevicePage(
+                                            device: d,
+                                            detail: dataLight,
+                                            onDelete: removeDevice,
+                                            onUpdate: saveData,
+                                          );
+                                        }));
+                                      }
+                                    }).toList();
+
+                                    print("----");
+                                    // Navigator.of(context)
+                                    //     .push(MaterialPageRoute(builder: (context) {
+                                    //   return DetailsPage(device: d);
+                                    // }));
+                                  },
+                                  trailing: StreamBuilder<BluetoothDeviceState>(
+                                    stream: d.state,
+                                    initialData:
+                                        BluetoothDeviceState.disconnected,
+                                    builder: (c, snapshot) {
+                                      if (snapshot.data ==
+                                          BluetoothDeviceState.connected) {}
+                                      return Icon(
+                                          Icons.bluetooth_connected_rounded);
+                                      // if (snapshot.data ==
+                                      //     BluetoothDeviceState.disconnected) {}
+                                      // return Icon(Icons.bluetooth_disabled_rounded);
+                                      //return Text(snapshot.data.toString());
+                                      // return Icon(
+                                      //   Icons.bluetooth,
+                                      //   color: Colors.blueAccent,
+                                      // );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            );
+                            // } else {
+                            //   return Container();
+                            // }
+                          }).toList(),
+                        );
+                      }
+                    },
+                  ),
+                ],
+              ),
             ),
-          ],
+          ),
         ),
       ),
 

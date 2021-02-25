@@ -230,18 +230,24 @@ class _LightnessSliderState extends State<_LightnessSlider>
           children: <Widget>[
             Container(
               width: double.infinity,
-              height: 18,
+              height: 12,
               margin: EdgeInsets.symmetric(
                 horizontal: widget.thumbSize / 3,
               ),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
+                borderRadius: BorderRadius.all(Radius.circular(11)),
                 gradient: LinearGradient(
                   stops: [0, 0.4, 1],
                   colors: [
-                    HSLColor.fromAHSL(1, widget.hue, 1, 0).toColor(),
+                    HSLColor.fromAHSL(0, widget.hue, 1, 0).toColor(),
                     HSLColor.fromAHSL(1, widget.hue, 1, 0.5).toColor(),
                     HSLColor.fromAHSL(1, widget.hue, 1, 0.9).toColor(),
+                    // Color.fromARGB(0, 255, 255, 255),
+                    // Color.fromARGB(125, 255, 255, 255),
+                    // Color.fromARGB(255, 255, 255, 255),
+                    // HSLColor.fromAHSL(0, widget.hue, 1, ).toColor(),
+                    // HSLColor.fromAHSL(0.5, widget.hue, 1, 1).toColor(),
+                    // HSLColor.fromAHSL(1, widget.hue, 1, 1).toColor(),
                   ],
                 ),
               ),
@@ -257,11 +263,9 @@ class _LightnessSliderState extends State<_LightnessSlider>
                     child: _Thumb(
                       size: widget.thumbSize,
                       color: HSLColor.fromAHSL(
-                        1,
-                        widget.hue,
-                        1,
-                        _lightnessController.value,
-                      ).toColor(),
+                              1, widget.hue, 1, _lightnessController.value)
+                          .toColor(),
+                      //color: Color.fromARGB(255, 255, 255, 255),
                     ),
                   ),
                 );

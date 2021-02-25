@@ -24,6 +24,7 @@ class _DevicePageState extends State<DevicePage> {
 
   bool releaseMessage = true;
   Color _currentColor = Colors.blue;
+  // List<int> currentRGB = [0, 0, 0];
 
   serviceDevice() async {
     services = await widget.device.discoverServices();
@@ -41,7 +42,7 @@ class _DevicePageState extends State<DevicePage> {
     services.forEach((service) async {
       var characteristics = service.characteristics;
       for (BluetoothCharacteristic c in characteristics) {
-        print(msg);
+        //print(msg);
         await c.write(utf8.encode(msg));
       }
     });
@@ -133,6 +134,7 @@ class _DevicePageState extends State<DevicePage> {
                       onChanged: (value) {
                         setState(
                             () => widget.detail.power = !widget.detail.power);
+                        sendMessage("p:${widget.detail.power}");
                         widget.onUpdate();
                       },
                     ),
@@ -144,17 +146,33 @@ class _DevicePageState extends State<DevicePage> {
                       initialColor: _currentColor,
                       onChanged: (Color color) {
                         _currentColor = color;
-                        print(_currentColor);
+                        //print(_currentColor);
                         //sendChangeColor(_currentColor);
                       },
                       onRelease: () {
                         setState(() {});
-                        sendChangeColor(_currentColor);
+
+                        //sendChangeColor(_currentColor);
+                        sendMessage(
+                            "r:${widget.detail.red}-g:${widget.detail.green}-b:${widget.detail.blue}");
+                        widget.onUpdate();
                       },
-                      strokeWidth: 30.0,
-                      thumbSize: 60,
+                      strokeWidth: 25.0,
+                      thumbSize: 50,
                       colorCodeBuilder: (context, color) {
+                        widget.detail.red = color.red;
+                        widget.detail.green = color.green;
+                        widget.detail.blue = color.blue;
+
                         return Container();
+                        // return Text(
+                        //   'rgb(${color.red}, ${color.green}, ${color.blue})',
+                        //   style: const TextStyle(
+                        //     fontSize: 24,
+                        //     fontWeight: FontWeight.bold,
+                        //     color: Colors.black,
+                        //   ),
+                        // );
                       },
                     ),
                   ],
